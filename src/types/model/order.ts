@@ -1,7 +1,8 @@
-import { uniqueId } from "./card";
+import { uniqueId } from "../index";
+import { IProduct } from "./product";
 
 export type paymentMethod = "online" | "receive"; 
-export type orderStatus   = "accept" | "decline" | "delivery";
+export type orderStatus   = "accept" | "decline" | "delivery" | "create";
 
 //Интерфейс для работы с обьектом, в котором находятся только адрес и способ оплаты
 export interface IOrderOptions {
@@ -19,5 +20,5 @@ export interface IContant {
 export interface IOrder extends IContant, IOrderOptions {
   id: uniqueId;
   status: orderStatus;
+  items: IProduct[];
 }
-

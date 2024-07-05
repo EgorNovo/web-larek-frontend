@@ -1,7 +1,9 @@
-import { IBasket } from "./basket";
-import { ICard } from "./card";
+import { IBasket } from "./model/basket";
+import { IProduct } from "./model/product";
 
-export interface IAppState {
+export type uniqueId = string;
+
+export interface IPage {
   basket: IBasket;
-  gallery: ICard[];
+  gallery: IProduct[] | [];
 }
