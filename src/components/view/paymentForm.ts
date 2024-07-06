@@ -2,7 +2,7 @@ import { IPaymentFormUI } from "../../types/view/paymentForm";
 import { IEvents } from "../base/events";
 import { UIComponent } from "../base/view";
 
-export class BasketUI extends UIComponent<IPaymentFormUI> {
+export class PaymentFormUI extends UIComponent<IPaymentFormUI> {
   protected _paymentMethod:    HTMLElement;
   protected _adress:           HTMLElement;
   protected _button:           HTMLElement;  

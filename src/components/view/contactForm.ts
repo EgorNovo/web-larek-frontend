@@ -2,7 +2,7 @@ import { IContantFormUI } from "../../types/view/contantForm";
 import { IEvents } from "../base/events";
 import { UIComponent } from "../base/view";
 
-export class BasketUI extends UIComponent<IContantFormUI> {
+export class ContactFormUI extends UIComponent<IContantFormUI> {
   protected _mail:    HTMLElement;
   protected _phone:   HTMLElement;
   protected _button:  HTMLElement;

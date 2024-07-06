@@ -2,7 +2,7 @@ import { ISuccesUI } from "../../types/view/succes";
 import { IEvents } from "../base/events";
 import { UIComponent } from "../base/view";
 
-export class BasketUI extends UIComponent<ISuccesUI> {
+export class SuccesUI extends UIComponent<ISuccesUI> {
   protected _button:    HTMLElement;
   protected _message:   HTMLElement;
 
