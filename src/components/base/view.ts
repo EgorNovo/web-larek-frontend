@@ -1,19 +1,40 @@
-export abstract class View<T> {
-  element:HTMLElement
+import { IEvents } from "./events";
 
-  constructor(element: HTMLElement) {
-    this.element = element;
+export abstract class UIComponent<T> {
+  protected readonly container:HTMLElement;
+  events: IEvents;
+
+  protected constructor(container: HTMLElement, events: IEvents) {
+    this.container = container;
+    this.events = events;
   }
 
-  setImage(element:HTMLElement, link:string, alt:string = "Описание заглушка"):void {
-    /* Монтируем изображение в элемент */
+  protected setTextConten(element:HTMLElement, text:string):void {
+    /* Установить текстовое наполнение */
   }
 
-  setTextContent(element:HTMLElement, content?:object):void {
-    /* Устанавливаем textContent при наличии */
+  protected setImage(element:HTMLElement, src:string):void {
+    /* Установить ссылку на изображение */
   }
 
-  toggleClass(element:HTMLElement, className:string):void {
-    /* Переключение класса для элемента */
+  protected setAlt(element:HTMLElement, alt:string):void {
+    /* Установить описание для изображения */
+  }
+
+  toggleClass(element: HTMLElement, className: string):void {
+    /* Переключение класса элемента */
+  }
+
+  toggleDisabled(element: HTMLElement):void {
+    /* Переключение состояния элемента в верстке */
+  }
+
+  toggleVisible(element: HTMLElement):void {
+    /* Скрывать/показывать элемент в верстке */
+  }
+
+  render(data?: Partial<T>): HTMLElement {
+    Object.assign(this as object, data ?? {});
+    return this.container
   }
 }

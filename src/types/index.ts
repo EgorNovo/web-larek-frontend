@@ -1,9 +1,11 @@
-import { IBasket } from "./model/basket";
-import { IProduct } from "./model/product";
-
 export type uniqueId = string;
+export type paymentMethod = "online"|"cash";
 
-export interface IPage {
-  basket: IBasket;
-  gallery: IProduct[] | [];
+export interface ICard {
+  id: uniqueId,
+  category: string,
+  titile: string,
+  description: string,
+  price: number | null,
+  image: string
 }

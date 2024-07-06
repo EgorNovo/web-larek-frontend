@@ -1,7 +1,8 @@
-import { IProduct } from "./product";
+import { ICard } from "..";
 
 export interface IBasket {
-  //Уникальные товары в корзине 
-  items: Map<IProduct, number>;
-  totalPrice: number;
+  items: ICard[],
+
+  add(): void,
+  remove(): void
 }
