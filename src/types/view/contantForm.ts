@@ -1,4 +1,4 @@
 export interface IContantFormUI {
-  email: string
+  email: string,
   phone: string,
 }

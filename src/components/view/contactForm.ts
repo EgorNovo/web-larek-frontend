@@ -2,7 +2,6 @@ import { IContantFormUI } from "../../types/view/contantForm";
 import { IEvents } from "../base/events";
 import { Form } from "../common/Form";
 
-
 export class ContactFormUI extends Form<IContantFormUI> {
   constructor(container:HTMLFormElement, protected events: IEvents) {
     super(container, events)

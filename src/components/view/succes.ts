@@ -1,7 +1,10 @@
-import { ISuccesUI } from "../../types/view/succes";
 import { ensureElement } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { UIComponent } from "../base/view";
+
+export interface ISuccesUI {
+  text: string
+}
 
 export class SuccesUI extends UIComponent<ISuccesUI> {
   protected _button:    HTMLElement;

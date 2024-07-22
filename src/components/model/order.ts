@@ -45,7 +45,6 @@ export class Order extends Model<IOrder> {
 
   set email( email:string ) {
     this._email = email;
-    console.log(1)
     this.validateMail();
   }
 

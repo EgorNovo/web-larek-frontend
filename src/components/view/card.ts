@@ -62,7 +62,6 @@ export class CardUI extends UIComponent<ICardUI> {
   set price(price:number | null) {
     if(!price) {
       this.setTextContent(this._price, 'Бесцено');
-      if(this._button) this.setDisabled(this._button, true);
     } else {
       this.setTextContent(this._price, `${String(price)} синапсов`); 
     }
@@ -70,10 +69,6 @@ export class CardUI extends UIComponent<ICardUI> {
 
   set inBasket( value:boolean ) {
     this.setDisabled(this._button, value)
-  }
-
-  get inBasket() {
-    return this._inBasket;
   }
 
   set id(id:uniqueId) {

@@ -2,7 +2,8 @@ import { ICard } from "../types";
 import { Api, ApiListResponse } from "./base/api";
 
 export interface ILarekAPI {
-  /*.....*/
+  getCardItem(id:string): Promise<ICard>,
+  getCardList(): Promise<ICard[]> 
 }
 
 export class LarekAPI extends Api implements ILarekAPI {

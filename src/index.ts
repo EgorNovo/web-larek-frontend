@@ -63,7 +63,7 @@ events.on('items:chenges', () => {
 });
 
 //Открытие модального окна карточки, при выборе карточки в каталоге 
-events.on('card:selected', (data: {cardId:uniqueId}) => {
+events.on('card:selected', (data: { cardId:uniqueId }) => {
   const card = new CardUI(cloneTemplate(templateCardPreview), events);
   const [cardData] = app.catalog.filter( card => card.id === data.cardId )
 
@@ -75,7 +75,7 @@ events.on('card:selected', (data: {cardId:uniqueId}) => {
       price: cardData.price,
       image: cardData.image,
       id: cardData.id,
-      inBasket: app.basket.some( item => item.id === cardData.id)
+      inBasket: cardData.price === null || app.basket.some( item => item.id === cardData.id)
     })
   })
 
@@ -83,7 +83,7 @@ events.on('card:selected', (data: {cardId:uniqueId}) => {
 });
 
 //Добавляем карточку в корзину
-events.on('card:addBasket', (data: {cardId:uniqueId}) => { 
+events.on('card:addBasket', (data: { cardId:uniqueId }) => { 
   app.basket.push(app.catalog.filter( card => card.id === data.cardId)[0] )
   page.counter = app.basket.length;
 
@@ -101,7 +101,7 @@ events.on('card:addBasket', (data: {cardId:uniqueId}) => {
 })
 
 //Удаляем карточку из корзины
-events.on('card:removeBasket', (data: {cardId:uniqueId}) => {
+events.on('card:removeBasket', (data: { cardId:uniqueId }) => {
   app.basket = app.basket.filter( item => item.id !== data.cardId);
   basket.list = app.basket.map( (item, i) => {
     const card = new CardUI(cloneTemplate(templateCardBasket),events);
@@ -145,7 +145,7 @@ events.on('payment:open', () => {
 })
 
 //Выбор способа оплаты
-events.on('paymentMethod:change', (data: { target:string}) => {
+events.on('paymentMethod:change', (data: { target:string }) => {
   app.order.paymentMethod = data.target as paymentMethod;
 })
 //Задаем адес доставки

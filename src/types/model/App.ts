@@ -1,13 +1,12 @@
+import { ICard } from "..";
 import { IOrder } from "./order";
 
 export interface IApp {
   order: IOrder,
-
-  // getCollections(): void,
-  // checkValidInpit(): void,
-  // clearBasket(): void,
-  // setBasketCounter(): void,
-
-  /* ... */
-
+  catalog: ICard[],
+  basket: ICard[],
+  setCatalog(items: ICard[]):void,
+  setPrice():number,
+  initOrder():IOrder,
+  clearBasket():void
 }

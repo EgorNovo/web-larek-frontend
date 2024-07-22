@@ -9,7 +9,6 @@ export type CatalogChangeEvent = {
   catalog: ICard[];
 }
 
-
 export class App extends Model<IApp> {
   protected _order: IOrder;
   protected _catalog: ICard[];

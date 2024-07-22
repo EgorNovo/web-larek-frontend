@@ -38,5 +38,4 @@ export class Page extends UIComponent<IPage> {
   set block(value:boolean) {
     this.toggleClass(this._wrapper, 'page__wrapper_locked', value)
   }
-   
 }
