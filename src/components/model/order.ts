@@ -19,10 +19,10 @@ export class Order extends Model<IOrder> {
   protected _phone: string = '';
   protected _items: ICard[] = [];
   protected _errors: IErrors = {
-    paymentMethodError: '',
-    addressError: '',
-    phoneError: '',
-    emailError: ''
+    paymentMethodError: 'Выберете способ оплаты',
+    addressError: 'Введите адрес доставки',
+    phoneError: 'Введите телефон',
+    emailError: 'Введите почту'
   };
 
   set paymentMethod( method:paymentMethod ) {

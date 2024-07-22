@@ -17,7 +17,7 @@ export class Modal extends UIComponent<IModal> {
     this._content       = ensureElement<HTMLElement>('.modal__content', container);
 
     this._closeButton.addEventListener('click', this.close.bind(this));
-    this.container.addEventListener('click', evt => {
+    this.container.addEventListener('mousedown', evt => {
       if(evt.target === evt.currentTarget) {
         this.close();
       }
@@ -31,11 +31,13 @@ export class Modal extends UIComponent<IModal> {
 
   open() {
     this.container.classList.add('modal_active');
+    document.addEventListener("keyup", this.handleEscUp);
     this.events.emit('modal:open');
   }
 
   close() {
     this.container.classList.remove('modal_active');
+    document.removeEventListener("keyup", this.handleEscUp);
     this.events.emit('modal:close');
   }
 
