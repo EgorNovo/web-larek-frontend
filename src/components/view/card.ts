@@ -1,50 +1,82 @@
+import { uniqueId } from "../../types";
 import { ICardUI } from "../../types/view/card";
+import { ensureElement } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { UIComponent } from "../base/view";
 
 export class CardUI extends UIComponent<ICardUI> {
-  protected _category:    HTMLElement;
-  protected _title:       HTMLElement;
-  protected _description: HTMLElement;
-  protected _image:       HTMLElement;
-  protected _price:       HTMLElement;
-  protected _button:      HTMLElement;
+  protected _category:     HTMLElement;
+  protected _title:        HTMLElement;
+  protected _image?:       HTMLImageElement;
+  protected _price:        HTMLElement;
+  protected _button?:      HTMLButtonElement;
+  protected _buttonDelete?:HTMLButtonElement;
+  protected _description?: HTMLElement;
+  protected _id:           uniqueId;
+  protected _inBasket?:    boolean;
 
+  constructor(protected container: HTMLElement, protected events: IEvents) {
+    super(container);
 
-  constructor(container:HTMLElement, protected settings:object, events: IEvents) {
-    super(container, events)
+    this._title           = ensureElement<HTMLElement>(`.card__title`, container)
+    this._price           = ensureElement<HTMLElement>(`.card__price`, container)
+    this._button          = container.querySelector('.button');
+    this._description     = container.querySelector('.card__text');
+    this._category        = container.querySelector(`.card__category`);
+    this._image           = container.querySelector(`.card__image`);
+    this._buttonDelete    = container.querySelector('.basket__item-delete');
 
-    this._category = container.querySelector(`${settings.classNameCategoryParagraph}`)
-    this._title = container.querySelector(`${settings.classNameTitleParagraph}`)
-    this._description = container.querySelector(`${settings.classNameDescriptionParagraph}`)
-    this._image = container.querySelector(`${settings.classNameImg}`)
-    this._price = container.querySelector(`${settings.classNamePriceParagraph}`)
-    this._button = container.querySelector(`${settings.classNameButton}`)
-  }
+    if(this._button) {
+      this._button.addEventListener('click', () => {
+          events.emit('card:addBasket', {cardId: this._id})
+        })
+    } else if(!this._buttonDelete) {
+      this.container.addEventListener('click', () => {
+        events.emit('card:selected', {cardId: this._id})
+      })
+    }
 
-  set category(category:string) {
-    super.setTextConten(this._category, category);
-  }
-
-  set title(title:string) {
-    super.setTextConten(this._title, title);
+    if(this._buttonDelete) {
+      this._buttonDelete.addEventListener('click', () => {
+        events.emit('card:removeBasket', {cardId: this._id})
+      })
+    }
   }
 
   set description(description:string) {
-    super.setTextConten(this._description, description);
+   this.setTextContent(this._description, description);
+  }
+
+  set category(category:string) {
+    this.setTextContent(this._category, category);
+  }
+
+  set title(title:string) {
+    this.setTextContent(this._title, title);
   }
 
   set image(src:string) {
-    super.setImage(this._image, src);
+    this._image.src = src;
   }
 
-  set alt(alt:string) {
-    super.setAlt(this._image, alt);
+  set price(price:number | null) {
+    if(!price) {
+      this.setTextContent(this._price, 'Бесцено');
+      if(this._button) this.setDisabled(this._button, true);
+    } else {
+      this.setTextContent(this._price, `${String(price)} синапсов`); 
+    }
   }
 
-  set price(price:string) {
-    super.setTextConten(this._price, price);
+  set inBasket( value:boolean ) {
+    this.setDisabled(this._button, value)
   }
 
-  /* ..... */
+  get inBasket() {
+    return this._inBasket;
+  }
+
+  set id(id:uniqueId) {
+    this._id = id;
+  }
 }

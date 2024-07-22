@@ -1,32 +1,53 @@
 import { IBasketUI } from "../../types/view/basket";
+import { createElement, ensureElement, ensureAllElements } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { UIComponent } from "../base/view";
 
 export class BasketUI extends UIComponent<IBasketUI> {
-  protected _list:    HTMLElement;
-  protected _price:   HTMLElement;
-  protected _button:  HTMLElement;
+  protected _list:    HTMLUListElement;
+  protected _price:   HTMLSpanElement;
+  protected _button:  HTMLButtonElement;
+  protected _index:   HTMLSpanElement[];
 
-  constructor(container:HTMLElement, protected settings:object, events: IEvents) {
-    super(container,events)
+  constructor(container:HTMLElement, events: IEvents) {
+    super(container)
 
-    this._list = container.querySelector(`${settings.classNameList}`)
-    this._price = container.querySelector(`${settings.classNamePriceParagraph}`)
-    this._button = container.querySelector(`${settings.classNameButton}`)
+    this._list    = ensureElement<HTMLUListElement>('.basket__list', container);
+    this._price   = ensureElement<HTMLSpanElement>('.basket__price', container);
+    this._button  = ensureElement<HTMLButtonElement>('.basket__button', container);
+
+    if (this._button) {
+      this._button.addEventListener('click', () => {
+        events.emit("payment:open")
+      })
+    }
   }
 
-  set price(price:string) {
-    super.setTextConten(this._price, price);
+  set price(price:number) {
+    this.setTextContent(this._price, `${price} синапсов`)
+  }
+
+  set valid( value:boolean ) {
+    this.setDisabled(this._button, !value)
   }
 
   set list(li:HTMLElement[]) {
-    Array.from(li).forEach( e => this._list.appendChild(e))
+    if(li.length) {
+      this._list.replaceChildren(...li)
+    } else {
+      this._list.replaceChildren(createElement<HTMLParagraphElement>('p', {
+        textContent: 'Корзина пуста'
+      }))
+    }
   }
 
-  dissableButton() {
-    /* Какой-то код */
-    super.toggleDisabled;
-  }
+  renderWithIndex(data?: Partial<IBasketUI>): HTMLElement {
+    this._index   = ensureAllElements<HTMLSpanElement>('.basket__item-index', this.container);
 
-  /* ...  */
+    this._index.forEach( (item, index) => {
+      this.setTextContent(item, String(index+1))
+    })
+
+    return super.render(data);
+  }
 }

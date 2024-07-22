@@ -1,4 +1,5 @@
 import { ISuccesUI } from "../../types/view/succes";
+import { ensureElement } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { UIComponent } from "../base/view";
 
@@ -6,17 +7,18 @@ export class SuccesUI extends UIComponent<ISuccesUI> {
   protected _button:    HTMLElement;
   protected _message:   HTMLElement;
 
-  constructor(container:HTMLElement, protected settings:object, events: IEvents) {
-    super(container, events)
+  constructor(container:HTMLElement, protected events: IEvents) {
+    super(container)
 
-    this._button = container.querySelector(`${settings.classNameButton}`)
-    this._message = container.querySelector(`${settings.classNameMessage}`)
+    this._button  = ensureElement<HTMLElement>('.order-success__close', container);
+    this._message = ensureElement<HTMLElement>('.order-success__description', container);
 
+    this._button.addEventListener('click', () => {
+      this.events.emit('succes:close');
+    })
   }
 
-  set mesage(message:string) {
-    super.setTextConten(this._message, "Заказ успешно оформлен")
+  set message( totalPrice:string ) {
+    this.setTextContent(this._message, `Списано ${totalPrice} синапсов`)
   }
-
-  /* ... */
 }

@@ -1,29 +1,18 @@
 import { IContantFormUI } from "../../types/view/contantForm";
 import { IEvents } from "../base/events";
-import { UIComponent } from "../base/view";
+import { Form } from "../common/Form";
 
-export class ContactFormUI extends UIComponent<IContantFormUI> {
-  protected _mail:    HTMLElement;
-  protected _phone:   HTMLElement;
-  protected _button:  HTMLElement;
 
-  constructor(container:HTMLElement, protected settings:object, events: IEvents) {
+export class ContactFormUI extends Form<IContantFormUI> {
+  constructor(container:HTMLFormElement, protected events: IEvents) {
     super(container, events)
-
-    this._mail = container.querySelector(`${settings.classNameMailInput}`)
-    this._phone = container.querySelector(`${settings.classNamePhoneInput}`)
-    this._button = container.querySelector(`${settings.classNameButton}`)
   }
 
-  set mail(mail:string) {
-    /* ... */
+  set email(email:string) {
+    (this.container.elements.namedItem('email') as HTMLInputElement).value = email;
   }
 
   set phone(phone:string) {
-    /* ... */
+    (this.container.elements.namedItem('phone') as HTMLInputElement).value = phone;
   }
-
-
-    /* ... */
-
 }

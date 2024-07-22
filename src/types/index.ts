@@ -2,10 +2,10 @@ export type uniqueId = string;
 export type paymentMethod = "online"|"cash";
 
 export interface ICard {
-  id: uniqueId,
   category: string,
-  titile: string,
-  description: string,
+  title: string,
   price: number | null,
-  image: string
+  image: string,
+  id:uniqueId,
+  description: string
 }

@@ -1,4 +1,5 @@
 export interface IBasketUI {
-  items: HTMLElement[],
-  price: number
+  list: HTMLElement[],
+  price: number,
+  valid: boolean
 }

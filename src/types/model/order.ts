@@ -1,7 +1,11 @@
-import { ICard } from '../index'
+import { ICard, paymentMethod } from "..";
 
 export interface IOrder {
   items: ICard[],
-  applyOrder():Promise<object>
-  /* ... */
+  address:string,
+  paymentMethod:paymentMethod,
+  email:string,
+  phone:string,
+  applyOrder():void,
+  clearOrder():void
 }
