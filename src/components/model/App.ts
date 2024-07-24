@@ -1,9 +1,8 @@
-import { ICard } from "../../types";
+import { ICard, uniqueId } from "../../types";
 import { IApp } from "../../types/model/App";
 import { IOrder } from "../../types/model/order";
 import { IEvents } from "../base/events";
 import { Model } from "../base/model";
-import { Order } from "./order";
 
 export type CatalogChangeEvent = {
   catalog: ICard[];
@@ -40,24 +39,48 @@ export class App extends Model<IApp> {
     return this._order;
   }
 
-  setCatalog(items: ICard[]) {
+  setCatalog( items: ICard[] ) {
     this.catalog = items;
     this.emitChanges('items:chenges', { catalog: this.catalog});
   }
 
-  setPrice():number {
+  getPrice():number {
     return this._basket.reduce( (acc, item) => {
       return acc += Number(item.price);
     },0)
   }
 
-  initOrder():IOrder {
-    this._order = new Order({}, this.events);
+  initOrder( order:IOrder ):IOrder {
+    this._order = order;
     this._order.clearOrder();
     return this.order;
   }
 
   clearBasket() {
     this.basket = []
+  }
+
+  addInBasket( cardId:uniqueId ) {
+    const card = this.catalog.find( card => card.id === cardId )
+    this._basket.push(card);
+  }
+
+  removeFromBasket( cardId:uniqueId ) {
+     this._basket = this.basket.filter( card => card.id !== cardId )
+  }
+
+  getItemsIdFromBasket():string[] {
+    return this.basket.map( item => item.id);
+  }
+
+  createOrderPostData():object {
+    return {
+      payment:  this._order.paymentMethod,
+      address:  this._order.address,
+      email:    this._order.email,
+      phone:    this._order.phone,
+      total:    this.getPrice(),
+      items:    this.getItemsIdFromBasket()
+    }
   }
 } 

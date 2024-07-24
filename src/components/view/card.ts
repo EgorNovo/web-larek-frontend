@@ -28,7 +28,7 @@ export class CardUI extends UIComponent<ICardUI> {
 
     if(this._button) {
       this._button.addEventListener('click', () => {
-          events.emit('card:addBasket', {cardId: this._id})
+          events.emit('basket:onChange', {cardId: this._id, flag:'add'})
         })
     } else if(!this._buttonDelete) {
       this.container.addEventListener('click', () => {
@@ -38,7 +38,7 @@ export class CardUI extends UIComponent<ICardUI> {
 
     if(this._buttonDelete) {
       this._buttonDelete.addEventListener('click', () => {
-        events.emit('card:removeBasket', {cardId: this._id})
+        events.emit('basket:onChange', {cardId: this._id, flag: 'remove'})
       })
     }
   }
@@ -49,6 +49,28 @@ export class CardUI extends UIComponent<ICardUI> {
 
   set category(category:string) {
     this.setTextContent(this._category, category);
+    
+    switch(category) {
+      case 'софт-скил':  
+        this.toggleClass(this._category, 'card__category_soft', true)
+        break;
+    
+      case 'другое': 
+        this.toggleClass(this._category, 'card__category_other', true)
+        break;
+    
+      case 'дополнительное': 
+        this.toggleClass(this._category, 'card__category_additional', true)
+        break;
+
+      case 'кнопка':
+        this.toggleClass(this._category, 'card__category_button', true)
+        break;  
+
+      case 'хард-скил':
+        this.toggleClass(this._category, 'card__category_hard', true)
+        break;  
+    }
   }
 
   set title(title:string) {

@@ -1,5 +1,5 @@
 import { Modal } from './components/common/Modal';
-import { Page } from './components/Page';
+import { Page } from './components/view/Page';
 import { EventEmitter } from './components/base/events';
 import { LarekAPI } from './components/larekAPI';
 import { App } from './components/model/App';
@@ -12,7 +12,7 @@ import { cloneTemplate, ensureElement } from './utils/utils';
 import { PaymentFormUI } from './components/view/paymentForm';
 import { ContactFormUI } from './components/view/contactForm';
 import { SuccesUI } from './components/view/succes';
-import { IErrors } from './components/model/order';
+import { IErrors, Order } from './components/model/order';
 
 const events = new EventEmitter();
 const api = new LarekAPI(CDN_URL, API_URL);
@@ -42,10 +42,14 @@ const page = new Page(document.body, events);
 //Модальное окно 
 const modal = new Modal(modalDiv, events);
 //Корзина и формы 
-const basket = new BasketUI(cloneTemplate(templateBasket), events);
+const basket      = new BasketUI(cloneTemplate(templateBasket), events);
 const paymentForm = new PaymentFormUI(cloneTemplate(templateOrder), events);
 const contactForm = new ContactFormUI(cloneTemplate(templateContacts), events)
+const succes      = new SuccesUI(cloneTemplate(templateSuccess), events); 
 
+//Заказ
+const order = new Order({}, events);
+const orderApp = app.initOrder(order);
 
 //Монтируем карточки если поменяется хранилище карточек (пришли карточки с api)
 events.on('items:chenges', () => {
@@ -65,7 +69,7 @@ events.on('items:chenges', () => {
 //Открытие модального окна карточки, при выборе карточки в каталоге 
 events.on('card:selected', (data: { cardId:uniqueId }) => {
   const card = new CardUI(cloneTemplate(templateCardPreview), events);
-  const [cardData] = app.catalog.filter( card => card.id === data.cardId )
+  const cardData = app.catalog.find( card => card.id === data.cardId )
 
   modal.render({
     content: card.render({
@@ -82,12 +86,19 @@ events.on('card:selected', (data: { cardId:uniqueId }) => {
   modal.open();
 });
 
-//Добавляем карточку в корзину
-events.on('card:addBasket', (data: { cardId:uniqueId }) => { 
-  app.basket.push(app.catalog.filter( card => card.id === data.cardId)[0] )
-  page.counter = app.basket.length;
+//Добавляем/удаляем карточку в корзину
+events.on('basket:onChange', (data: { cardId:uniqueId, flag: string }) => { 
 
-  basket.list = app.basket.map( (item, i) => {
+  if (data.flag === 'add') {
+    app.addInBasket(data.cardId);
+  } else if(data.flag === 'remove') {
+    app.removeFromBasket(data.cardId);
+  }
+  
+  page.counter = app.basket.length;
+  basket.price = app.getPrice();
+
+  basket.list = app.basket.map( item => {
     const card = new CardUI(cloneTemplate(templateCardBasket),events);
 
     return card.render({
@@ -97,25 +108,9 @@ events.on('card:addBasket', (data: { cardId:uniqueId }) => {
     })
   })
 
-  modal.close()
-})
-
-//Удаляем карточку из корзины
-events.on('card:removeBasket', (data: { cardId:uniqueId }) => {
-  app.basket = app.basket.filter( item => item.id !== data.cardId);
-  basket.list = app.basket.map( (item, i) => {
-    const card = new CardUI(cloneTemplate(templateCardBasket),events);
-
-    return card.render({
-      title: item.title,
-      price: item.price,
-      id: item.id
-    })
-  } )
-
-  page.counter = app.basket.length;
-  basket.price = app.setPrice();
   basket.renderWithIndex({ valid: app.basket.length > 0 });
+
+  if (data.flag === 'add') modal.close()
 })
 
 //Открываем корзину
@@ -124,18 +119,17 @@ events.on('basket:open', () => {
     content: basket.renderWithIndex({ valid: app.basket.length > 0 })
   })
 
-  basket.price = app.setPrice();
+  basket.price = app.getPrice();
   modal.open();
 })
 
 //Работа с формами 
 //Форма выбора метода доставки и адреса
 events.on('payment:open', () => {
-  const order = app.initOrder();
   modal.render({
     content: paymentForm.render({
-      paymentMethod: order.paymentMethod,
-      address: order.address,
+      paymentMethod: orderApp.paymentMethod,
+      address: orderApp.address,
       valid: false,
       errors: []
     })
@@ -172,11 +166,10 @@ events.on('errors:changed', (errors: IErrors) => {
 
 //Открываем форму с контактами 
 events.on('order:submit', () => {
-  const order = app.order;
   modal.render({
     content: contactForm.render({
-      email: order.email,
-      phone: order.phone,
+      email: orderApp.email,
+      phone: orderApp.phone,
       valid: false,
       errors: []
     })
@@ -186,33 +179,24 @@ events.on('order:submit', () => {
 })
 
 //Оформление заказа
-events.on('contacts:submit', () => {  
-  //В работе нет работы с api, где мы могли бы получить ответ от сервера о успешном\неуспешном оформлении заказа - выведем финальный заказ в консоль
-  const order = app.order;
-  order.items = app.basket;
+events.on('contacts:submit', () => { 
+  api.post('/order', app.createOrderPostData()).then( () => {
+    //Откроем модальное окно с информацией о успешном оформлении заказа
+    succes.message = String(app.getPrice());
 
-  console.table({
-    email: order.email,
-    phone: order.phone,
-    address: order.address,
-    method: order.paymentMethod,
-    items: order.items
+    modal.render({
+      content: succes.render()
+    })
+
+    order.clearOrder();
+    app.clearBasket();
+    basket.list = [];
+    page.counter = 0
+
+    modal.open();
   })
-
-  //Откроем модальное окно с информацией о успешном оформлении заказа
-  const succes = new SuccesUI(cloneTemplate(templateSuccess), events); 
-  succes.message = String(app.setPrice());
-
-  modal.render({
-    content: succes.render()
-  })
-
-  order.clearOrder();
-  app.clearBasket();
-  basket.list = [];
-  page.counter = 0
-
-  modal.open();
+  .catch( error => console.log(error))
+  .finally()
 })
 
 //Блокируем экрн при открытии модального окна

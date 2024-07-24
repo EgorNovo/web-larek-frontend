@@ -1,4 +1,4 @@
-import { ICard } from "..";
+import { ICard, uniqueId } from "..";
 import { IOrder } from "./order";
 
 export interface IApp {
@@ -8,5 +8,9 @@ export interface IApp {
   setCatalog(items: ICard[]):void,
   setPrice():number,
   initOrder():IOrder,
-  clearBasket():void
+  clearBasket():void,
+  addInBasket( cardId:uniqueId):void,
+  removeFromBasket( cardId:uniqueId ):void,
+  getItemsIdFromBasket():string[],
+  createOrderPostData():object
 }

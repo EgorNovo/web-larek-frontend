@@ -194,6 +194,10 @@ export interface ISuccesUI {
 2) `setPrice` - расчитываем итоговую стоимость
 3) `initOrder` - иницилизация заказа 
 4) `clearBasket` - очищаем корзину 
+5) `addInBasket` - добавляем товар в корзину
+6) `removeFromBasket` - удаляем товар из корзины
+7) `getItemsIdFromBasket` - получаем id карточек в корзине для оформления заказа
+8) `createOrderPostData` - формируем объект с нужными полями для post запроса на сервер 
 
 ### Базовый абстрактный class UIComponent
 Класс для компонентов отвечающих за отображение, позволяет связывает View с presenter. Поля класса -  `container`.
@@ -292,8 +296,7 @@ export interface ISuccesUI {
 
 `items:chenges`
 `card:selected`
-`card:addBasket`
-`card:removeBasket`
+`basket:onChange`
 `basket:open`
 `payment:open`
 `paymentMethod:change`

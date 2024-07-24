@@ -1,6 +1,6 @@
-import { ensureElement } from "../utils/utils";
-import { IEvents } from "./base/events";
-import { UIComponent } from "./base/view";
+import { ensureElement } from "../../utils/utils";
+import { IEvents } from "../base/events";
+import { UIComponent } from "../base/view";
 
 export interface IPage {
   counter: number;
