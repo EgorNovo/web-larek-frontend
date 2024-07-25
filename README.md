@@ -296,6 +296,8 @@ export interface ISuccesUI {
 
 `items:chenges`
 `card:selected`
+`basket:addItem`
+`basket:removeItem`
 `basket:onChange`
 `basket:open`
 `payment:open`

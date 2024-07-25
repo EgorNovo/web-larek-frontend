@@ -28,17 +28,17 @@ export class CardUI extends UIComponent<ICardUI> {
 
     if(this._button) {
       this._button.addEventListener('click', () => {
-          events.emit('basket:onChange', {cardId: this._id, flag:'add'})
+          events.emit('basket:addItem', { cardId: this._id })
         })
     } else if(!this._buttonDelete) {
       this.container.addEventListener('click', () => {
-        events.emit('card:selected', {cardId: this._id})
+        events.emit('card:selected', { cardId: this._id })
       })
     }
 
     if(this._buttonDelete) {
       this._buttonDelete.addEventListener('click', () => {
-        events.emit('basket:onChange', {cardId: this._id, flag: 'remove'})
+        events.emit('basket:removeItem', { cardId: this._id })
       })
     }
   }

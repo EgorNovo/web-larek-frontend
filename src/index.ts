@@ -86,15 +86,21 @@ events.on('card:selected', (data: { cardId:uniqueId }) => {
   modal.open();
 });
 
-//Добавляем/удаляем карточку в корзину
-events.on('basket:onChange', (data: { cardId:uniqueId, flag: string }) => { 
+//Добавляем карточку в корзину
+events.on('basket:addItem', (data: { cardId:uniqueId }) => {
+  app.addInBasket(data.cardId);
+  events.emit('basket:onChange');
+  modal.close();
+});
 
-  if (data.flag === 'add') {
-    app.addInBasket(data.cardId);
-  } else if(data.flag === 'remove') {
-    app.removeFromBasket(data.cardId);
-  }
-  
+//Удаляем карточку из корзины
+events.on('basket:removeItem', (data: { cardId:uniqueId }) => {
+  app.removeFromBasket(data.cardId);
+  events.emit('basket:onChange')
+});
+
+//Реагируем на изменения состава корзины
+events.on('basket:onChange', () => { 
   page.counter = app.basket.length;
   basket.price = app.getPrice();
 
@@ -109,8 +115,6 @@ events.on('basket:onChange', (data: { cardId:uniqueId, flag: string }) => {
   })
 
   basket.renderWithIndex({ valid: app.basket.length > 0 });
-
-  if (data.flag === 'add') modal.close()
 })
 
 //Открываем корзину
@@ -119,7 +123,6 @@ events.on('basket:open', () => {
     content: basket.renderWithIndex({ valid: app.basket.length > 0 })
   })
 
-  basket.price = app.getPrice();
   modal.open();
 })
 
@@ -196,7 +199,6 @@ events.on('contacts:submit', () => {
     modal.open();
   })
   .catch( error => console.log(error))
-  .finally()
 })
 
 //Блокируем экрн при открытии модального окна
